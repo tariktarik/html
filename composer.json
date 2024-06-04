@@ -1,11 +1,11 @@
 {
-    "name": "laravelcollective/html",
+    "name": "lennon-mudenda/html",
     "description": "HTML and Form Builders for the Laravel Framework",
     "license": "MIT",
-    "homepage": "https://laravelcollective.com",
+    "homepage": "https://github.com/lennon-mudenda",
     "support": {
-        "issues": "https://github.com/LaravelCollective/html/issues",
-        "source": "https://github.com/LaravelCollective/html"
+        "issues": "https://github.com/lennon-mudenda/html/issues",
+        "source": "https://github.com/lennon-mudenda/html"
     },
     "authors": [
         {
@@ -15,6 +15,10 @@
         {
             "name": "Taylor Otwell",
             "email": "taylorotwell@gmail.com"
+        },
+        {
+            "name": "Lennon Mudenda",
+            "email": "lensig13@gmail.com"
         }
     ],
     "require": {
@@ -32,7 +36,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Collective\\Html\\": "src/"
+            "LennonMudenda\\Html\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -44,15 +48,14 @@
         },
         "laravel": {
             "providers": [
-                "Collective\\Html\\HtmlServiceProvider"
+                "LennonMudenda\\Html\\HtmlServiceProvider"
             ],
             "aliases": {
-                "Form": "Collective\\Html\\FormFacade",
-                "Html": "Collective\\Html\\HtmlFacade"
+                "Form": "LennonMudenda\\Html\\FormFacade",
+                "Html": "LennonMudenda\\Html\\HtmlFacade"
             }
         }
     },
     "minimum-stability": "dev",
-    "abandoned": "spatie/laravel-html",
     "prefer-stable": true
 }
