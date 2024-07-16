@@ -31,8 +31,8 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
         // prepare request for test with some data
         $request = Request::create('/foo', 'GET', [
             "person" => [
-                "name" => "John",
-                "surname" => "Doe",
+                "name" => "Abebe",
+                "surname" => "Girma",
             ],
             "agree" => 1,
             "checkbox_array" => [1, 2, 3],
