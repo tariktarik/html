@@ -43,13 +43,6 @@ class FormBuilder
     protected $view;
 
     /**
-     * The CSRF token used by the form builder.
-     *
-     * @var string
-     */
-    protected $csrfToken;
-
-    /**
      * Consider Request variables while auto fill.
      * @var bool
      */
@@ -116,12 +109,14 @@ class FormBuilder
      * @param  string                                     $csrfToken
      * @param  Request                                    $request
      */
-    public function __construct(HtmlBuilder $html, UrlGenerator $url, Factory $view, $csrfToken, Request $request = null)
+    public function __construct(HtmlBuilder $html, UrlGenerator $url, Factory $view, /**
+     * The CSRF token used by the form builder.
+     */
+    protected $csrfToken, Request $request = null)
     {
         $this->url = $url;
         $this->html = $html;
         $this->view = $view;
-        $this->csrfToken = $csrfToken;
         $this->request = $request;
     }
 
@@ -174,12 +169,10 @@ class FormBuilder
     /**
      * Create a new model based form builder.
      *
-     * @param  mixed $model
      * @param  array $options
-     *
      * @return \Illuminate\Support\HtmlString
      */
-    public function model($model, array $options = [])
+    public function model(mixed $model, array $options = [])
     {
         $this->model = $model;
 
@@ -189,11 +182,10 @@ class FormBuilder
     /**
      * Set the model instance on the form builder.
      *
-     * @param  mixed $model
      *
      * @return void
      */
-    public function setModel($model)
+    public function setModel(mixed $model)
     {
         $this->model = $model;
     }
@@ -605,7 +597,7 @@ class FormBuilder
      */
     protected function setQuickTextAreaSize($options)
     {
-        $segments = explode('x', $options['size']);
+        $segments = explode('x', (string) $options['size']);
 
         return array_merge($options, ['cols' => $segments[0], 'rows' => $segments[1]]);
     }
@@ -700,7 +692,7 @@ class FormBuilder
      */
     public function selectYear()
     {
-        return call_user_func_array([$this, 'selectRange'], func_get_args());
+        return call_user_func_array($this->selectRange(...), func_get_args());
     }
 
     /**
@@ -840,13 +832,11 @@ class FormBuilder
      * Create a checkbox input field.
      *
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
      * @param  array  $options
-     *
      * @return \Illuminate\Support\HtmlString
      */
-    public function checkbox($name, $value = 1, $checked = null, $options = [])
+    public function checkbox($name, mixed $value = 1, $checked = null, $options = [])
     {
         return $this->checkable('checkbox', $name, $value, $checked, $options);
     }
@@ -855,13 +845,11 @@ class FormBuilder
      * Create a radio button input field.
      *
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
      * @param  array  $options
-     *
      * @return \Illuminate\Support\HtmlString
      */
-    public function radio($name, $value = null, $checked = null, $options = [])
+    public function radio($name, mixed $value = null, $checked = null, $options = [])
     {
         if (is_null($value)) {
             $value = $name;
@@ -875,13 +863,11 @@ class FormBuilder
      *
      * @param  string $type
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
      * @param  array  $options
-     *
      * @return \Illuminate\Support\HtmlString
      */
-    protected function checkable($type, $name, $value, $checked, $options)
+    protected function checkable($type, $name, mixed $value, $checked, $options)
     {
         $this->type = $type;
 
@@ -899,35 +885,26 @@ class FormBuilder
      *
      * @param  string $type
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
-     *
      * @return bool
      */
-    protected function getCheckedState($type, $name, $value, $checked)
+    protected function getCheckedState($type, $name, mixed $value, $checked)
     {
-        switch ($type) {
-            case 'checkbox':
-                return $this->getCheckboxCheckedState($name, $value, $checked);
-
-            case 'radio':
-                return $this->getRadioCheckedState($name, $value, $checked);
-
-            default:
-                return $this->compareValues($name, $value);
-        }
+        return match ($type) {
+            'checkbox' => $this->getCheckboxCheckedState($name, $value, $checked),
+            'radio' => $this->getRadioCheckedState($name, $value, $checked),
+            default => $this->compareValues($name, $value),
+        };
     }
 
     /**
      * Get the check state for a checkbox input.
      *
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
-     *
      * @return bool
      */
-    protected function getCheckboxCheckedState($name, $value, $checked)
+    protected function getCheckboxCheckedState($name, mixed $value, $checked)
     {
         $request = $this->request($name);
 
@@ -954,12 +931,10 @@ class FormBuilder
      * Get the check state for a radio input.
      *
      * @param  string $name
-     * @param  mixed  $value
      * @param  bool   $checked
-     *
      * @return bool
      */
-    protected function getRadioCheckedState($name, $value, $checked)
+    protected function getRadioCheckedState($name, mixed $value, $checked)
     {
         $request = $this->request($name);
 
@@ -1238,7 +1213,7 @@ class FormBuilder
      */
     protected function getAppendage($method)
     {
-        list($method, $appendage) = [strtoupper($method), ''];
+        [$method, $appendage] = [strtoupper($method), ''];
 
         // If the HTTP method is in this list of spoofed methods, we will attach the
         // method spoofer hidden input to the form. This allows us to use regular
@@ -1297,7 +1272,7 @@ class FormBuilder
         }
 
         if (function_exists('app')) {
-            $hasNullMiddleware = app("Illuminate\Contracts\Http\Kernel")
+            $hasNullMiddleware = app(\Illuminate\Contracts\Http\Kernel::class)
                 ->hasMiddleware(ConvertEmptyStringsToNull::class);
 
             if ($hasNullMiddleware

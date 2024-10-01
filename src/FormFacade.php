@@ -15,6 +15,7 @@ class FormFacade extends Facade
      *
      * @return string
      */
+    #[\Override]
     protected static function getFacadeAccessor()
     {
         return 'form';

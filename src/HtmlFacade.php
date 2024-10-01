@@ -15,6 +15,7 @@ class HtmlFacade extends Facade
      *
      * @return string
      */
+    #[\Override]
     protected static function getFacadeAccessor()
     {
         return 'html';
