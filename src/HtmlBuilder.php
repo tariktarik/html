@@ -35,7 +35,7 @@ class HtmlBuilder
      * @param \Illuminate\Contracts\Routing\UrlGenerator $url
      * @param \Illuminate\Contracts\View\Factory         $view
      */
-    public function __construct(UrlGenerator $url = null, Factory $view)
+    public function __construct(Factory $view, UrlGenerator $url = null)
     {
         $this->url = $url;
         $this->view = $view;
@@ -383,13 +383,11 @@ class HtmlBuilder
     /**
      * Create the HTML for a listing element.
      *
-     * @param mixed  $key
      * @param string $type
-     * @param mixed  $value
      *
      * @return string
      */
-    protected function listingElement($key, $type, $value)
+    protected function listingElement(mixed $key, $type, mixed $value)
     {
         if (is_array($value)) {
             return $this->nestedListing($key, $type, $value);
@@ -401,13 +399,11 @@ class HtmlBuilder
     /**
      * Create the HTML for a nested listing attribute.
      *
-     * @param mixed  $key
      * @param string $type
-     * @param mixed  $value
      *
      * @return string
      */
-    protected function nestedListing($key, $type, $value)
+    protected function nestedListing(mixed $key, $type, mixed $value)
     {
         if (is_int($key)) {
             return $this->listing($type, $value);
@@ -490,7 +486,7 @@ class HtmlBuilder
             // To properly obfuscate the value, we will randomly convert each letter to
             // its entity or hexadecimal representation, keeping a bot from sniffing
             // the randomly obfuscated letters out of the string on the responses.
-            switch (rand(1, 3)) {
+            switch (random_int(1, 3)) {
                 case 1:
                     $safe .= '&#' . ord($letter) . ';';
                     break;
@@ -529,12 +525,10 @@ class HtmlBuilder
      * Generate an html tag.
      *
      * @param string $tag
-     * @param mixed $content
      * @param array  $attributes
-     *
      * @return \Illuminate\Support\HtmlString
      */
-    public function tag($tag, $content, array $attributes = [])
+    public function tag($tag, mixed $content, array $attributes = [])
     {
         $content = is_array($content) ? implode('', $content) : $content;
         return $this->toHtmlString('<' . $tag . $this->attributes($attributes) . '>' . $this->toHtmlString($content) . '</' . $tag . '>');

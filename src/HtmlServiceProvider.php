@@ -22,6 +22,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      *
      * @return void
      */
+    #[\Override]
     public function register()
     {
         $this->registerHtmlBuilder();
@@ -41,9 +42,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerHtmlBuilder()
     {
-        $this->app->singleton('html', function ($app) {
-            return new HtmlBuilder($app['url'], $app['view']);
-        });
+        $this->app->singleton('html', fn($app) => new HtmlBuilder($app['view'], $app['url']));
     }
 
     /**
@@ -67,7 +66,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     protected function registerBladeDirectives()
     {
-        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler): void {
             $namespaces = [
                 'Html' => get_class_methods(HtmlBuilder::class),
                 'Form' => get_class_methods(FormBuilder::class),
@@ -79,9 +78,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
                         $snakeMethod = Str::snake($method);
                         $directive = strtolower($namespace).'_'.$snakeMethod;
 
-                        $bladeCompiler->directive($directive, function ($expression) use ($namespace, $method) {
-                            return "<?php echo $namespace::$method($expression); ?>";
-                        });
+                        $bladeCompiler->directive($directive, fn($expression) => "<?php echo $namespace::$method($expression); ?>");
                     }
                 }
             }
@@ -93,6 +90,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      *
      * @return array
      */
+    #[\Override]
     public function provides()
     {
         return ['html', 'form', HtmlBuilder::class, FormBuilder::class];
